@@ -11,7 +11,6 @@ import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,15 +25,6 @@ class RequestHandlerTest {
      }
  }
 
- @Test
- // server should be up and running
- void serverShouldBeLive() throws IOException {
-
-     HttpRequest request = HttpRequest.newBuilder()
-             .uri(URI.create("http://localhost:3000/json")).build();
-     System.out.println("server is live " + serve.isAlive());
-     Assertions.assertTrue(serve.isAlive());
- }
 
  @Test
 // multiple server instance should not run on thesame port number
@@ -96,12 +86,10 @@ class RequestHandlerTest {
      try {
          response = client.send(request, HttpResponse.BodyHandlers.ofString());
          Path fileLocation = Paths.get("./src/files/quiz.json");
-         List<String> expectedFileContent = Files.readAllLines(fileLocation);
-         String expected  =  response.body();
-         System.out.println("response " + expected.replaceAll("\\s", ""));
-         System.out.println("expectedFileContent " + expectedFileContent);
-//         System.out.println(response.body().replaceAll("\\s", ""));
-         fail("Will Fix this latter");
+         String expectedFileContent = Files.readString(fileLocation).replaceAll("\\s", "");
+         String receivedFileContent  =  response.body().replaceAll("\\s", "");
+         assertEquals(expectedFileContent, receivedFileContent);
+
 
      } catch (IOException e) {
          e.printStackTrace();
@@ -122,12 +110,9 @@ class RequestHandlerTest {
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
             Path fileLocation = Paths.get("./src/files/quiz.json");
-            List<String> expectedFileContent = Files.readAllLines(fileLocation);
-            String expected  =  response.body();
-            System.out.println("response " + expected.replaceAll("\\s", ""));
-            System.out.println("expectedFileContent " + expectedFileContent);
-//         System.out.println(response.body().replaceAll("\\s", ""));
-            fail("Will Fix this latter");
+            String expectedFileContent = Files.readString(fileLocation).replaceAll("\\s", "");
+            String receivedFileContent  =  response.body().replaceAll("\\s", "");
+            assertEquals(expectedFileContent, receivedFileContent);
 
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
