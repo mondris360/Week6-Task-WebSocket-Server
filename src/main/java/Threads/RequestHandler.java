@@ -5,6 +5,7 @@ import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 public class RequestHandler extends   Thread {
     private Socket socket;
@@ -19,7 +20,11 @@ public class RequestHandler extends   Thread {
             BufferedReader requestReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String clientInput = requestReader.readLine();
             System.out.println("Incoming Request: " +  clientInput);
+            if(clientInput == null){
+                clientInput = "GET, /404, HTTP/1.1";
+            }
             String[] clientInputToArray = clientInput.split(" ");
+            System.out.println("clientInputToArray" + Arrays.toString(clientInputToArray));
             // get the requested route
             String route = clientInputToArray[1];
             // get the location of the file to  render
@@ -55,10 +60,8 @@ public class RequestHandler extends   Thread {
 
             // prepare the http response
             responseWriter.write(("HTTP/1.1 " + statusCode + CRLF).getBytes());
-            System.out.println("Status =========" +  statusCode);
             responseWriter.write(("Content-Type: " + contentType + CRLF).getBytes());
-            responseWriter.write(( CRLF).getBytes());
-//            responseWriter.write(("Content-Length:" + fileContent.length + CRLF + CRLF).getBytes());
+            responseWriter.write((CRLF).getBytes());
             responseWriter.write(fileContent);
             responseWriter.write((CRLF + CRLF).getBytes());
             responseWriter.flush();
@@ -79,6 +82,9 @@ public class RequestHandler extends   Thread {
                 break;
             case "/json":
                 fileLocation = "./src/files/quiz.json";
+                break;
+            case "/favicon.ico":
+                fileLocation = "./src/files/favicon.ico";
                 break;
 
             default:

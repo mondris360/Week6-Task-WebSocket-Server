@@ -28,10 +28,23 @@ class RequestHandlerTest {
 
  @Test
  // server should be up and running
- void serverShouldBeLive(){
+ void serverShouldBeLive() throws IOException {
+
      HttpRequest request = HttpRequest.newBuilder()
              .uri(URI.create("http://localhost:3000/json")).build();
+     System.out.println("server is live " + serve.isAlive());
      Assertions.assertTrue(serve.isAlive());
+ }
+
+ @Test
+// multiple server instance should not run on thesame port number
+ void shouldNotStartMultipleServersOnTheSamePortNo() throws IOException {
+
+     Assertions.assertThrows(java.net.BindException.class, ()->{
+         // note: @ForEach Setup has already started the server
+         serve  = new Server(3000);
+         serve.start();
+     });
  }
 
  @Test
@@ -97,7 +110,6 @@ class RequestHandlerTest {
      }
  }
 
-
     @Test
         // Should send the correct html content
     void shouldSendCorrectHtmlFileContent(){
@@ -117,9 +129,7 @@ class RequestHandlerTest {
 //         System.out.println(response.body().replaceAll("\\s", ""));
             fail("Will Fix this latter");
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }

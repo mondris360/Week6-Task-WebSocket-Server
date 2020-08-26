@@ -17,7 +17,7 @@ public class Server extends Thread {
     @Override
     public void run()  {
        try {
-           System.out.println("Threads.Server Is Running on Port: " + server.getLocalPort());
+           System.out.println("Server Is Running on Port: " + server.getLocalPort());
            while(true){
                // create a new Thread to handle the new  client request
                Thread requestHandler =  new Thread(new RequestHandler(server.accept()));
